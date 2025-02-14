@@ -1,0 +1,676 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Playlists</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1DB954;
+            --secondary-color: #1ED760;
+            --accent-color: #9933FF;
+            --dark-bg: #121212;
+            --darker-bg: #000000;
+            --text-light: #FFFFFF;
+            --text-muted: #B3B3B3;
+            --input-bg: #282828;
+            --input-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--darker-bg);
+            padding: 2rem 1.5rem;
+            transition: var(--transition);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Table Styles */
+        #playlistsTable {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: var(--text-light); /* Added this to ensure text is visible */
+        }
+
+        #playlistsTable thead th {
+            background: var(--darker-bg);
+            color: var(--text-light); /* Changed from text-muted to ensure header visibility */
+            padding: 1rem;
+            font-weight: 500;
+            text-align: left;
+            border-bottom: 1px solid var(--input-border);
+        }
+
+        #playlistsTable tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--input-border);
+            color: var(--text-light);
+            background: var(--dark-bg); /* Added background to ensure contrast */
+        }
+
+        #playlistsTable tbody tr {
+            background: var(--dark-bg); /* Added default background */
+        }
+
+        #playlistsTable tbody tr:hover {
+            background: rgba(255, 255, 255, 0.1); /* Made hover state more visible */
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-success {
+            background: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn-success:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .btn-warning {
+            background: var(--accent-color);
+            color: var(--text-light);
+        }
+
+        .btn-danger {
+            background: #E61E32;
+            color: var(--text-light);
+        }
+
+        .btn-danger:hover {
+            background: #ff1e1e;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: var(--dark-bg);
+            border-radius: 12px;
+            border: 1px solid var(--input-border);
+            color: var(--text-light);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--input-border);
+            padding: 1.5rem;
+        }
+
+        .modal-header .btn-close {
+            background: var(--text-light);
+            opacity: 0.5;
+            padding: 0.5rem;
+        }
+
+        .modal-title {
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-label {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-light);
+            padding: 0.8rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.25);
+            outline: none;
+            background: var(--input-bg);
+            color: var(--text-light);
+        }
+
+        
+        /* DataTables Custom Styling */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_processing,
+        .dataTables_wrapper .dataTables_paginate {
+            color: var(--text-muted);
+            margin: 1rem 0;
+        }
+
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--input-border) !important;
+            color: var(--text-muted) !important;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            margin: 0 0.2rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--primary-color) !important;
+            color: var(--text-light) !important;
+            border: none !important;
+        }
+
+        /* Toggle Sidebar Button */
+        .toggle-sidebar {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--primary-color);
+            border: none;
+            color: var(--text-light);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .toggle-sidebar {
+                display: block;
+            }
+            .header {
+                margin-top: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .btn {
+                width: 100%;
+            }
+            @media (max-width: 480px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .sidebar {
+                width: 250px;
+                padding: 1.5rem 1rem;
+            }
+
+            .sidebar-brand h2 {
+                font-size: 1.5rem;
+            }
+        }
+        }
+
+        /* Option styles for select */
+        option {
+            background: var(--input-bg);
+            color: var(--text-light);
+            padding: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="toggle-sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay"></div>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav>
+                <a href="{% url 'dashboard' %}" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="{% url 'manage_users' %}" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    Manage Users
+                </a>
+                <a href="{% url 'manage_playlists' %}" class="nav-link active">
+                    <i class="fas fa-music"></i>
+                    Manage Playlists
+                </a>
+                <!-- <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </a> -->
+                <a href="{% url 'logout' %}" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    Logout
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2>Manage Playlists</h2>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPlaylistModal">
+                    <i class="fas fa-plus"></i> Add Playlist
+                </button>
+            </div>
+
+            <table id="playlistsTable" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Emotion</th>
+                        <th>URL</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for playlist in playlists %}
+                    <tr>
+                        <td>{{ playlist.id }}</td>
+                        <td>{{ playlist.emotion }}</td>
+                        <td>{{ playlist.playlist_url }}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm edit-playlist" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editPlaylistModal"
+                                    data-id="{{ playlist.id }}"
+                                    data-emotion="{{ playlist.emotion }}"
+                                    data-url="{{ playlist.playlist_url }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-playlist" data-id="{{ playlist.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+   <!-- Add Playlist Modal -->
+<div class="modal fade" id="addPlaylistModal" tabindex="-1" aria-labelledby="addPlaylistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPlaylistModalLabel">Add Playlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addPlaylistForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="addEmotion" class="form-label">Emotion</label>
+                        <select class="form-control" id="addEmotion" required>
+                            <option value="">Select Emotion</option>
+                            <option value="admiration">Admiration</option>
+                            <option value="amusement">Amusement</option>
+                            <option value="anger">Anger</option>
+                            <option value="annoyance">Annoyance</option>
+                            <option value="approval">Approval</option>
+                            <option value="caring">Caring</option>
+                            <option value="confusion">Confusion</option>
+                            <option value="curiosity">Curiosity</option>
+                            <option value="desire">Desire</option>
+                            <option value="disappointment">Disappointment</option>
+                            <option value="disapproval">Disapproval</option>
+                            <option value="disgust">Disgust</option>
+                            <option value="embarrassment">Embarrassment</option>
+                            <option value="excitement">Excitement</option>
+                            <option value="fear">Fear</option>
+                            <option value="gratitude">Gratitude</option>
+                            <option value="grief">Grief</option>
+                            <option value="joy">Joy</option>
+                            <option value="love">Love</option>
+                            <option value="nervousness">Nervousness</option>
+                            <option value="optimism">Optimism</option>
+                            <option value="pride">Pride</option>
+                            <option value="realization">Realization</option>
+                            <option value="relief">Relief</option>
+                            <option value="remorse">Remorse</option>
+                            <option value="sadness">Sadness</option>
+                            <option value="surprise">Surprise</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="addPlaylistUrl" class="form-label">Playlist URL</label>
+                        <input type="url" class="form-control" id="addPlaylistUrl" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Playlist</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Playlist Modal -->
+<div class="modal fade" id="editPlaylistModal" tabindex="-1" aria-labelledby="editPlaylistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPlaylistModalLabel">Edit Playlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPlaylistForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editPlaylistId">
+                    <div class="mb-3">
+                        <label for="editEmotion" class="form-label">Emotion</label>
+                        <select class="form-control" id="editEmotion" required>
+                            <option value="">Select Emotion</option>
+                            <option value="admiration">Admiration</option>
+                            <option value="amusement">Amusement</option>
+                            <option value="anger">Anger</option>
+                            <option value="annoyance">Annoyance</option>
+                            <option value="approval">Approval</option>
+                            <option value="caring">Caring</option>
+                            <option value="confusion">Confusion</option>
+                            <option value="curiosity">Curiosity</option>
+                            <option value="desire">Desire</option>
+                            <option value="disappointment">Disappointment</option>
+                            <option value="disapproval">Disapproval</option>
+                            <option value="disgust">Disgust</option>
+                            <option value="embarrassment">Embarrassment</option>
+                            <option value="excitement">Excitement</option>
+                            <option value="fear">Fear</option>
+                            <option value="gratitude">Gratitude</option>
+                            <option value="grief">Grief</option>
+                            <option value="joy">Joy</option>
+                            <option value="love">Love</option>
+                            <option value="nervousness">Nervousness</option>
+                            <option value="optimism">Optimism</option>
+                            <option value="pride">Pride</option>
+                            <option value="realization">Realization</option>
+                            <option value="relief">Relief</option>
+                            <option value="remorse">Remorse</option>
+                            <option value="sadness">Sadness</option>
+                            <option value="surprise">Surprise</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPlaylistUrl" class="form-label">Playlist URL</label>
+                        <input type="url" class="form-control" id="editPlaylistUrl" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Playlist</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Your existing JavaScript code here
+        $(document).ready(function() {
+            $('#playlistsTable').DataTable();
+
+            const toggleBtn = document.querySelector('.toggle-sidebar');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
+
+            toggleBtn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Rest of your existing JavaScript...
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+        $('#playlistsTable').DataTable(); // Initialize DataTable
+    
+        // ✅ Add Playlist
+        $("#addPlaylistForm").submit(function(event) {
+            event.preventDefault();
+            var emotion = $("#addEmotion").val();
+            var playlist_url = $("#addPlaylistUrl").val();
+    
+            $.ajax({
+                url: "{% url 'add_playlist' %}",  
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    emotion: emotion,
+                    playlist_url: playlist_url
+                }),
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }, // CSRF Token Handling
+                success: function(response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function(xhr) {
+                    alert("Error: " + xhr.responseText);
+                }
+            });
+        });
+    
+        // ✅ Open Edit Modal and Load Playlist Data
+        $('#editPlaylistModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                var emotion = button.data('emotion');  // Get emotion value
+                var url = button.data('url');
+    
+                $("#editPlaylistId").val(id);
+                $("#editEmotion").val(emotion);  // Set dropdown value
+                $("#editPlaylistUrl").val(url);
+            });
+    
+    
+        // ✅ Update Playlist
+        $("#editPlaylistForm").submit(function(event) {
+            event.preventDefault();
+            var id = $("#editPlaylistId").val();
+            var emotion = $("#editEmotion").val();
+            var playlist_url = $("#editPlaylistUrl").val();
+    
+            $.ajax({
+                url: `/update_playlist/${id}/`,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    emotion: emotion,
+                    playlist_url: playlist_url
+                }),
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                success: function(response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function(xhr) {
+                    alert("Error: " + xhr.responseText);
+                }
+            });
+        });
+    
+        // ✅ Delete Playlist
+        $(".delete-playlist").click(function() {
+            var id = $(this).data("id");
+            if (confirm("Are you sure you want to delete this playlist?")) {
+                $.ajax({
+                    url: `/delete_playlist/${id}/`,
+                    type: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert("Error: " + xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+        
+    </script>
+</body>
+</html>

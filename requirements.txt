@@ -1,0 +1,6 @@
+Django==4.1.7
+transformers==4.26.1
+torch==1.13.1
+pyenchant==3.0.0
+# spacy==3.3.0
+django-environ==0.12.0

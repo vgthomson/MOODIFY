@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4e73df;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.8em;
+            color: #4e73df;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4e73df;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background-color: #2e59d9;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Edit User Details
+    </header>
+
+    <h1>Edit User: {{ user.username }}</h1>
+
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            <label for="first_name">First Name:</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" required><br>
+
+            <label for="last_name">Last Name:</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" required><br>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" value="{{ user.email }}" required><br>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Edit User Page</p>
+    </footer>
+</body>
+</html>

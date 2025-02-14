@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Moodify</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1DB954;      /* Spotify-inspired green */
+            --secondary-color: #1ED760;    /* Lighter green for hover states */
+            --accent-color: #9933FF;       /* Purple for special elements */
+            --dark-bg: #121212;           /* Very dark gray, almost black */
+            --darker-bg: #000000;         /* Pure black for contrasts */
+            --text-light: #FFFFFF;        /* White text */
+            --text-muted: #B3B3B3;        /* Muted gray text */
+            --card-bg: #282828;           /* Dark gray for cards */
+            --input-bg: #282828;          /* Dark gray for input fields */
+            --input-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: var(--darker-bg);
+            padding: 2rem 1.5rem;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lead {
+            color: var(--text-light);
+            opacity: 0.9;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .option-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .option-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .option-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .option-card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-custom {
+            background: var(--primary-color);
+            border: none;
+            color: var(--text-light);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-custom:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--darker-bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            bottom: 0;
+        }
+
+        .toggle-sidebar {
+            display: none;
+            background: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .toggle-sidebar {
+                display: block;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-sidebar d-lg-none">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <h2>Moodify</h2>
+            </div>
+            <nav>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'playsongs' %}">
+                            <i class="fas fa-music"></i>
+                            Play Random Songs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'redirect_to_emotion' %}">
+                            <i class="fas fa-smile"></i>
+                            Play Based on Feelings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'emotion_history' %}">
+                            <i class="fas fa-history"></i>
+                            Emotion History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="welcome-section">
+                <h1>Welcome, {{ user.first_name }}! 👋</h1>
+                <p class="lead">What would you like to do today?</p>
+            </div>
+
+            <div class="options">
+                <div class="option-card">
+                    <i class="fas fa-music"></i>
+                    <h3>Random Songs</h3>
+                    <p>Discover new music with our random songs</p>
+                    <a href="{% url 'playsongs' %}" class="btn btn-custom">Start Listening</a>
+                </div>
+
+                <div class="option-card">
+                    <i class="fas fa-smile"></i>
+                    <h3>Mood Based</h3>
+                    <p>Let your feelings guide your musical journey</p>
+                    <a href="{% url 'redirect_to_emotion' %}" class="btn btn-custom">Select Mood</a>
+                </div>
+
+                <div class="option-card">
+                    <i class="fas fa-history"></i>
+                    <h3>Your History</h3>
+                    <p>Review your emotional journey through music</p>
+                    <a href="{% url 'emotion_history' %}" class="btn btn-custom">View History</a>
+                </div>
+            </div>
+
+            <footer>
+                <p>&copy; 2025 Moodify. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.querySelector('.toggle-sidebar');
+            
+            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
