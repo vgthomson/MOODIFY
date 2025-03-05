@@ -20,11 +20,21 @@ class UserProfile(models.Model):
         return f"Profile for {self.user.username} - Deleted: {'Yes' if self.is_deleted else 'No'}"
 
 
+class Language(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    
+    def __str__(self):
+        return self.name
+
 class Playlist(models.Model):
-    emotion = models.CharField(max_length=50, unique=True)
+    emotion = models.CharField(max_length=50)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
     playlist_url = models.URLField()
 
+    class Meta:
+        unique_together = ('emotion', 'language')  # Ensures no duplicate playlist for same emotion and language.
+
     def __str__(self):
-        return f"{self.emotion}: {self.playlist_url}"
+        return f"{self.emotion} ({self.language}): {self.playlist_url}"
     
 

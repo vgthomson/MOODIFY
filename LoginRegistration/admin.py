@@ -4,7 +4,8 @@ from .models import UserProfile
 from django.contrib.auth.models import User
 
 admin.site.register(PasswordReset)
-
+admin.site.register(Language)
+admin.site.register(Playlist)
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'is_deleted')

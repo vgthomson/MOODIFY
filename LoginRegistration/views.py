@@ -222,11 +222,33 @@ def add_playlist(request):
             data = json.loads(request.body)  # Ensure JSON decoding
             emotion = data.get("emotion")
             playlist_url = data.get("playlist_url")
+            language_name = data.get("language")
+            print(data)
 
-            if not emotion or not playlist_url:
+            if not emotion or not playlist_url or not language_name:
                 return JsonResponse({"message": "Missing fields"}, status=400)
 
-            Playlist.objects.create(emotion=emotion, playlist_url=playlist_url)
+            # Get or create the language
+            language, created = Language.objects.get_or_create(name=language_name)
+
+            # Check if a playlist with same emotion and language already exists
+            existing_playlist = Playlist.objects.filter(
+                emotion=emotion, 
+                language=language
+            ).first()
+
+            if existing_playlist:
+                return JsonResponse(
+                    {"message": "A playlist for this emotion and language already exists"}, 
+                    status=400
+                )
+
+            # Create new playlist
+            Playlist.objects.create(
+                emotion=emotion, 
+                playlist_url=playlist_url,
+                language=language
+            )
             return JsonResponse({"message": "Playlist added successfully"}, status=201)
 
         except json.JSONDecodeError:
@@ -234,21 +256,51 @@ def add_playlist(request):
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=500)
 
-#     return JsonResponse({"message": "Invalid request"}, status=405)
+    return JsonResponse({"message": "Invalid request"}, status=405)
 
 @csrf_exempt
 @user_passes_test(is_superadmin)
 def update_playlist(request, id):
     if request.method == "POST":
         try:
-            data = json.loads(request.body.decode("utf-8"))  # ✅ Ensure JSON decoding
+            data = json.loads(request.body.decode("utf-8"))  # Ensure JSON decoding
             playlist = get_object_or_404(Playlist, id=id)
-            playlist.emotion = data.get("emotion")
-            playlist.playlist_url = data.get("playlist_url")
+            
+            emotion = data.get("emotion")
+            playlist_url = data.get("playlist_url")
+            language_name = data.get("language")
+
+            if not emotion or not playlist_url or not language_name:
+                return JsonResponse({"message": "Missing fields"}, status=400)
+
+            # Get or create the language
+            language, created = Language.objects.get_or_create(name=language_name)
+
+            # Check if another playlist with same emotion and language exists
+            existing_playlist = Playlist.objects.filter(
+                emotion=emotion, 
+                language=language
+            ).exclude(id=id).first()
+
+            if existing_playlist:
+                return JsonResponse(
+                    {"message": "A playlist for this emotion and language already exists"}, 
+                    status=400
+                )
+
+            # Update playlist
+            playlist.emotion = emotion
+            playlist.playlist_url = playlist_url
+            playlist.language = language
             playlist.save()
+            
             return JsonResponse({"message": "Playlist Updated"}, status=200)
+        
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid JSON"}, status=400)
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=500)
+    
     return JsonResponse({"message": "Invalid request"}, status=405)
 
 @csrf_exempt
@@ -259,6 +311,11 @@ def delete_playlist(request, id):
         return JsonResponse({"message": "Playlist Deleted"}, status=200)
 
     return JsonResponse({"message": "Invalid request"}, status=400)
+
+# View to get languages for populating dropdown
+def get_languages(request):
+    languages = Language.objects.all().values_list('name', flat=True)
+    return JsonResponse(list(languages), safe=False)
 
 @csrf_exempt
 @user_passes_test(is_superadmin)

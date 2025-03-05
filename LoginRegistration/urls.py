@@ -26,9 +26,11 @@ urlpatterns = [
     path('add_playlist/', views.add_playlist, name='add_playlist'),
     path('update_playlist/<int:id>/', views.update_playlist, name='update_playlist'),
     path('delete_playlist/<int:id>/', views.delete_playlist, name='delete_playlist'),
+    path('get_languages/', views.get_languages, name='get_languages'),
 
     path("manage_users/", views.manage_users, name="manage_users"),
     #path("add_user/", views.add_user, name="add_user"),
     path("update_user/<int:id>/", views.update_user, name="update_user"),
     path("delete_user/<int:id>/", views.delete_user, name="delete_user"),
+    
 ]

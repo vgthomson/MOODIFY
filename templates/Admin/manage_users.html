@@ -22,18 +22,18 @@
     />
     <style>
       :root {
-          --primary-color: #1DB954;
-          --secondary-color: #1ED760;
-          --accent-color: #9933FF;
-          --dark-bg: #121212;
-          --darker-bg: #000000;
-          --text-light: #FFFFFF;
-          --text-muted: #B3B3B3;
-          --input-bg: #282828;
-          --input-border: rgba(255, 255, 255, 0.1);
-          --transition: all 0.3s ease;
-          --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
+            --primary-color: #3498db;      /* Vibrant Blue */
+            --secondary-color: #2ecc71;    /* Emerald Green */
+            --accent-color: #8e44ad;       /* Deep Purple */
+            --dark-bg: #1a2238;            /* Deep Navy Blue */
+            --darker-bg: #121725;          /* Darker Navy */
+            --text-light: #ffffff;         /* Pure White */
+            --text-muted: #a0aec0;         /* Soft Gray */
+            --input-bg: #2c3e50;           /* Dark Slate */
+            --input-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
 
       * {
           margin: 0;
@@ -128,24 +128,35 @@
 
       /* Table Styles */
       .table {
-          background: rgba(255, 255, 255, 0.05);
-          color: var(--text-light);
-          border-radius: 12px;
-          overflow: hidden;
-          margin-top: 1.5rem;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: var(--text-light);
       }
 
       .table thead th {
-          background: var(--darker-bg);
-          color: var(--text-muted);
-          font-weight: 500;
-          border-bottom: 1px solid var(--input-border);
+            background: var(--darker-bg);
+            color: var(--text-light); /* Changed from text-muted to ensure header visibility */
+            padding: 1rem;
+            font-weight: 500;
+            text-align: left;
+            border-bottom: 1px solid var(--input-border);
       }
 
       .table tbody td {
-          border-color: var(--input-border);
+            padding: 1rem;
+            border-bottom: 1px solid var(--input-border);
+            color: var(--text-light);
+            background: var(--dark-bg);
       }
 
+      .tbody tr {
+        background: var(--dark-bg);}
+        
       .table tbody tr:hover {
           background: rgba(255, 255, 255, 0.05);
       }
