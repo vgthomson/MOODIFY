@@ -252,6 +252,82 @@
                 font-size: 1rem;
             }
         }
+        /* Language selection dropdown styling */
+.language-select {
+    background-color: white;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    min-width: 250px;
+}
+
+.language-select:focus {
+    border-color: #8a5cf6;
+    box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+    outline: none;
+}
+
+.language-select:hover {
+    border-color: #8a5cf6;
+}
+
+.selected-language {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.language-label {
+    color: #6c5ce7;
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.language-selection {
+    background: #090909;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #6c5ce7;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.language-selection:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.language-selection h5 {
+    color: #4a4a4a;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.language-selection button {
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.language-selection button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+/* Style for dropdown options */
+.language-select option {
+    color: #333333;
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.language-select option:hover,
+.language-select option:focus,
+.language-select option:checked {
+    background-color: #6c5ce7;
+    color: #ffffff;
+}
     </style>
 </head>
 <body>
@@ -338,12 +414,38 @@
                             <i class="fas fa-sync-alt me-2"></i>Reload
                         </button>
                     </form>
+                    
                     {% if is_real_word is not None %}
                         <div class="result">
                             {% if is_real_word %}
                                 <p><i class="fas fa-check-circle me-2"></i>All words are valid.</p>
                                 {% if emotion %}
                                     <p>Detected Emotion: <strong>{{ emotion }}</strong></p>
+                                    
+                                    {% if language_form %}
+                                        <div class="language-selection mt-4">
+                                            <h5>Select your preferred language for music:</h5>
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                {{ language_form.as_p }}
+                                                <input type="hidden" name="emotion" value="{{ emotion }}">
+                                                <input type="hidden" name="original_text" value="{{ original_text }}">
+                                                <button type="submit" class="btn btn-custom">
+                                                    <i class="fas fa-music me-2"></i>Get Playlist
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if playlist_url %}
+                                        <div class="playlist-container mt-4">
+                                            <h5>Here's your playlist:</h5>
+                                            <div class="embed-responsive embed-responsive-16by9">
+                                                <iframe class="embed-responsive-item" src="{{ playlist_url }}" 
+                                                    frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
                             {% else %}
                                 <p><i class="fas fa-exclamation-circle me-2"></i>Some words are invalid:</p>
@@ -356,7 +458,6 @@
                         </div>
                     {% endif %}
                 </div>
-            </div>
 
             <!-- Footer -->
             <footer>

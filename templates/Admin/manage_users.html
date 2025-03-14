@@ -355,27 +355,32 @@
     <div class="wrapper">
       <!-- Sidebar -->
       <div class="sidebar">
-        <h4 class="text-center">Admin Panel</h4>
-        <nav class="nav flex-column">
-          <a class="nav-link" href="{% url 'dashboard' %}">
-            <i class="fas fa-home me-2"></i>Dashboard
-          </a>
-          <a class="nav-link active" href="{% url 'manage_users' %}">
-            <i class="fas fa-users me-2"></i>Manage Users
-          </a>
-          <a class="nav-link" href="{% url 'manage_playlists' %}">
-            <i class="fas fa-music me-2"></i>Manage Playlists
-          </a>
-          <!-- <a href="#" class="nav-link">
-            <i class="fas fa-chart-bar"></i>
-            Analytics
-        </a> -->
-        <a href="{% url 'logout' %}" class="nav-link">
-            <i class="fas fa-cog"></i>
-            Logout
-        </a>
+        <div class="sidebar-brand">
+            <h2>Admin Panel</h2>
+        </div>
+        <nav>
+            <a href="{% url 'dashboard' %}" class="nav-link active">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="{% url 'manage_users' %}" class="nav-link">
+                <i class="fas fa-users"></i>
+                Manage Users
+            </a>
+            <a href="{% url 'manage_playlists' %}" class="nav-link">
+                <i class="fas fa-list-ul"></i>
+                Manage Playlists
+            </a>
+            <a href="{% url 'home' %}" class="nav-link">
+                <i class="fas fa-home"></i>
+                User Page
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
         </nav>
-      </div>
+    </div>
 
       <!-- Main Content -->
       <div class="main-content">

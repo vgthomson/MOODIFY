@@ -151,6 +151,66 @@
             font-weight: 600;
         }
 
+        /* New section styling for detailed insights */
+        .data-section {
+            margin-top: 2.5rem;
+        }
+
+        .data-section h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1rem;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Chart section */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow);
+            height: 300px;
+        }
+
+        .emotion-tag {
+            background: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
         .toggle-sidebar {
             display: none;
             background: var(--primary-color);
@@ -266,7 +326,7 @@
             </div>
             <nav>
                 <a href="{% url 'dashboard' %}" class="nav-link active">
-                    <i class="fas fa-home"></i>
+                    <i class="fas fa-tachometer-alt"></i>
                     Dashboard
                 </a>
                 <a href="{% url 'manage_users' %}" class="nav-link">
@@ -274,15 +334,15 @@
                     Manage Users
                 </a>
                 <a href="{% url 'manage_playlists' %}" class="nav-link">
-                    <i class="fas fa-music"></i>
+                    <i class="fas fa-list-ul"></i>
                     Manage Playlists
                 </a>
-                <!-- <a href="#" class="nav-link">
-                    <i class="fas fa-chart-bar"></i>
-                    Analytics
-                </a> -->
+                <a href="{% url 'home' %}" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    User Page
+                </a>
                 <a href="{% url 'logout' %}" class="nav-link">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-sign-out-alt"></i>
                     Logout
                 </a>
             </nav>
@@ -294,31 +354,80 @@
                 <h2>Welcome to Admin Dashboard</h2>
                 <div class="user-info">
                     <i class="fas fa-user-circle"></i>
-                    Admin User
+                    {{ request.user.username }}
                 </div>
             </div>
 
             <div class="stats-container">
                 <div class="stat-card">
                     <h3>Total Users</h3>
-                    <p>1,234</p>
+                    <p>{{ total_users }}</p>
                 </div>
                 <div class="stat-card">
                     <h3>Active Playlists</h3>
-                    <p>456</p>
+                    <p>{{ active_playlists }}</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Songs</h3>
-                    <p>10,567</p>
+                    <h3>Total Song Interactions</h3>
+                    <p>{{ total_songs }}</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Storage Used</h3>
-                    <p>234 GB</p>
+                    <h3>Available Languages</h3>
+                    <p>{{ available_languages }}</p>
+                </div>
+            </div>
+
+            <!-- Top Emotions Section -->
+            <div class="data-section">
+                <h2>Top Emotions</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Emotion</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emotion in top_emotions %}
+                            <tr>
+                                <td>{{ emotion.emotion }}</td>
+                                <td>{{ emotion.count }}</td>
+                                <td>{{ emotion.count|floatformat:1 }}%</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">No emotion data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <!-- Add Chart.js for data visualization -->
+            <div class="data-section">
+                <h2>Emotion Trends</h2>
+                <div class="chart-container">
+                    <canvas id="emotionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Language Distribution -->
+            <div class="data-section">
+                <h2>Language Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="languageChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
     <script>
         const toggleBtn = document.querySelector('.toggle-sidebar');
         const sidebar = document.querySelector('.sidebar');
@@ -339,6 +448,149 @@
                 overlay.classList.remove('active');
             }
         });
+
+        // Chart.js implementation for emotion trends
+        document.addEventListener('DOMContentLoaded', function() {
+            // Emotion data from Django context
+            const emotionData = [
+                {% for emotion in top_emotions %}
+                    {
+                        emotion: "{{ emotion.emotion }}",
+                        count: {{ emotion.count }}
+                    },
+                {% endfor %}
+            ];
+
+            // Create emotion chart
+            const emotionCtx = document.getElementById('emotionChart').getContext('2d');
+            new Chart(emotionCtx, {
+                type: 'bar',
+                data: {
+                    labels: emotionData.map(item => item.emotion),
+                    datasets: [{
+                        label: 'User Emotions',
+                        data: emotionData.map(item => item.count),
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(142, 68, 173, 0.7)',
+                            'rgba(241, 196, 15, 0.7)',
+                            'rgba(231, 76, 60, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(142, 68, 173, 1)',
+                            'rgba(241, 196, 15, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Top User Emotions',
+                            color: '#ffffff',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const languageData = [
+                {% for lang in language_distribution %}
+                    {
+                        language: "{{ lang.language__name }}",
+                        count: {{ lang.count }}
+                    },
+                {% endfor %}
+            ];
+
+            const languageCtx = document.getElementById('languageChart').getContext('2d');
+            new Chart(languageCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: languageData.map(item => item.language),
+                    datasets: [{
+                        data: languageData.map(item => item.count),
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(142, 68, 173, 0.7)',
+                            'rgba(241, 196, 15, 0.7)',
+                            'rgba(231, 76, 60, 0.7)',
+                            'rgba(52, 73, 94, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(26, 188, 156, 0.7)',
+                            'rgba(243, 156, 18, 0.7)',
+                            'rgba(192, 57, 43, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(142, 68, 173, 1)',
+                            'rgba(241, 196, 15, 1)',
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(52, 73, 94, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(26, 188, 156, 1)',
+                            'rgba(243, 156, 18, 1)',
+                            'rgba(192, 57, 43, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#a0aec0'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Language Distribution',
+                            color: '#ffffff',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
+            

@@ -373,33 +373,33 @@
 
     <div class="wrapper">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-brand">
-                <h2>Admin Panel</h2>
+            <div class="sidebar">
+                <div class="sidebar-brand">
+                    <h2>Admin Panel</h2>
+                </div>
+                <nav>
+                    <a href="{% url 'dashboard' %}" class="nav-link active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'manage_users' %}" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Manage Users
+                    </a>
+                    <a href="{% url 'manage_playlists' %}" class="nav-link">
+                        <i class="fas fa-list-ul"></i>
+                        Manage Playlists
+                    </a>
+                    <a href="{% url 'home' %}" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        User Page
+                    </a>
+                    <a href="{% url 'logout' %}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </nav>
             </div>
-            <nav>
-                <a href="{% url 'dashboard' %}" class="nav-link">
-                    <i class="fas fa-home"></i>
-                    Dashboard
-                </a>
-                <a href="{% url 'manage_users' %}" class="nav-link">
-                    <i class="fas fa-users"></i>
-                    Manage Users
-                </a>
-                <a href="{% url 'manage_playlists' %}" class="nav-link active">
-                    <i class="fas fa-music"></i>
-                    Manage Playlists
-                </a>
-                <!-- <a href="#" class="nav-link">
-                    <i class="fas fa-chart-bar"></i>
-                    Analytics
-                </a> -->
-                <a href="{% url 'logout' %}" class="nav-link">
-                    <i class="fas fa-cog"></i>
-                    Logout
-                </a>
-            </nav>
-        </div>
 
         <!-- Main Content -->
         <div class="main-content">

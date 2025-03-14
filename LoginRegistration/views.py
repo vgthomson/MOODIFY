@@ -8,12 +8,13 @@ from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.urls import reverse
 from .models import *
+from SongSuggestion.models import EmotionLog
 import json
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
-
+from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 
 @login_required
@@ -207,7 +208,36 @@ def manage_playlists(request):
 
 @user_passes_test(is_superadmin)
 def dashboard(request):
-    return render(request, 'Admin/admin_dashboard.html')
+    # Get total users count (excluding deleted users)
+    total_users = UserProfile.objects.filter(is_deleted=False).count()
+    
+    # Count active playlists
+    active_playlists = Playlist.objects.count()
+    
+    # Count total emotion logs (representing song interactions)
+    total_songs = EmotionLog.objects.count()
+    
+    # Count languages available
+    available_languages = Language.objects.count()
+    
+    # Get most common emotions (top 5)
+    top_emotions = EmotionLog.objects.values('emotion').annotate(
+        count=Count('emotion')
+    ).order_by('-count')[:5]
+    
+    # Recent emotion logs
+    recent_logs = EmotionLog.objects.select_related('user').order_by('-timestamp')[:10]
+    
+    context = {
+        'total_users': total_users,
+        'active_playlists': active_playlists,
+        'total_songs': total_songs,
+        'available_languages': available_languages,
+        'top_emotions': top_emotions,
+        'recent_logs': recent_logs,
+    }
+    
+    return render(request, 'Admin/admin_dashboard.html', context)
 
 @user_passes_test(is_superadmin)
 def manage_users(request):
