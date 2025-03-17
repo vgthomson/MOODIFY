@@ -4,7 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeatCanvas - Moodify</title>
+    <title>EmotionWave - Moodify</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -442,7 +442,7 @@
                     </div>
                     <div class="nav-item">
                         <a href="{% url 'beatcanvas' %}" class="active">
-                            <i class="fas fa-wave-square"></i> BeatCanvas
+                            <i class="fas fa-heartbeat"></i> EmotionWave
                         </a>
                     </div>
                     {% if user.is_superuser %}
@@ -479,8 +479,8 @@
     </div>
     {% endif %}
         <div class="beatcanvas-section">
-            <h1>BeatCanvas <span class="beats-emoji">🎵</span></h1>
-            <p class="lead">Experience music in a new dimension with dynamic visualizations</p>
+            <h1>EmotionWave <span class="beats-emoji">🎵</span></h1>
+            <p class="lead">Play music by mood and language for a truly personalized experience!</p>
             
             <div class="music-selection-container">
                 <form method="post" id="playlist-form">
@@ -506,7 +506,7 @@
                     </div>
 
                     <button type="button" class="btn-beatcanvas" id="launch-button">
-                        <i class="fas fa-play-circle me-2"></i>Launch BeatCanvas
+                        <i class="fas fa-play-circle me-2"></i>Launch EmotionWave
                     </button>
                 </form>
             </div>
