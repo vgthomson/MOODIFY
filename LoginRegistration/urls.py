@@ -13,10 +13,6 @@ urlpatterns = [
     path('password-reset-sent/<str:reset_id>/', views.ResetPasswordSentView, name='password-reset-sent'),
     path('reset-password/<str:reset_id>/', views.ResetPasswordView, name='reset-password'),
     path('redirect-to-emotion/', views.redirecttosongmodule, name='redirect_to_emotion'),
-    #path('manage-users/', views.manage_users, name='manage_users'),
-    # path('edit-user/<int:user_id>/', views.edit_user, name='edit_user'),
-    # path('soft-delete-user/<int:user_id>/', views.soft_delete_user, name='soft_delete_user'),
-    # path('restore-user/<int:user_id>/', views.restore_user, name='restore_user'),
     path('playsongs/',views.playsongs, name='playsongs'),
 
     #--ADMIN URLS--#
@@ -32,5 +28,10 @@ urlpatterns = [
     #path("add_user/", views.add_user, name="add_user"),
     path("update_user/<int:id>/", views.update_user, name="update_user"),
     path("delete_user/<int:id>/", views.delete_user, name="delete_user"),
+
+    path('submit/', views.submit_feedback, name='submit_feedback'),
+    path('manage_feedback/', views.manage_feedback, name='manage_feedback'),
+    path('update_feedback/<int:feedback_id>/', views.update_feedback, name='update_feedback'),
+    path('delete_feedback/<int:feedback_id>/', views.delete_feedback, name='delete_feedback'),
     
 ]

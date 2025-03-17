@@ -4,7 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emotion History - Moodify</title>
+    <title>BeatCanvas - Moodify</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -64,6 +64,10 @@
             align-items: center;
             gap: 1.5rem;
         }
+        .nav-item a.active {
+            color: var(--text-light);
+            background: rgba(108, 92, 231, 0.2);
+        }
 
         .nav-item a {
             color: var(--text-muted);
@@ -72,10 +76,6 @@
             transition: var(--transition);
             padding: 0.5rem 1rem;
             border-radius: 50px;
-        }
-        .nav-item a.active {
-            color: var(--text-light);
-            background: rgba(108, 92, 231, 0.2);
         }
 
         .nav-item a:hover {
@@ -120,10 +120,10 @@
             padding: 7rem 2rem 2rem;
         }
 
-        .page-header {
+        .beatcanvas-section {
             text-align: center;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
             background: rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
             border-radius: 20px;
@@ -132,7 +132,7 @@
             overflow: hidden;
         }
 
-        .page-header::before {
+        .beatcanvas-section::before {
             content: '';
             position: absolute;
             top: -100px;
@@ -144,7 +144,7 @@
             z-index: -1;
         }
 
-        .page-header::after {
+        .beatcanvas-section::after {
             content: '';
             position: absolute;
             bottom: -100px;
@@ -156,95 +156,150 @@
             z-index: -1;
         }
 
-        .page-header h1 {
-            font-size: 2.5rem;
+        .beatcanvas-section h1 {
+            font-size: 2.8rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .header-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
+        .beats-emoji {
+            font-size: 3rem;
+            display: inline-block;
+            animation: pulse 2s infinite;
         }
 
-        .btn-custom {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .lead {
             color: var(--text-light);
-            padding: 0.8rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: var(--transition);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
-            text-decoration: none;
+            opacity: 0.9;
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
         }
 
-        .btn-custom:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
-            color: white;
-        }
-
-        .history-container {
+        .music-selection-container {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 2.5rem 2rem;
+            max-width: 700px;
+            margin: 0 auto;
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: var(--shadow);
         }
 
-        .history-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .history-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            transition: var(--transition);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .history-item:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .history-item .timestamp {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .history-item .emotion {
+        .form-label {
             color: var(--text-light);
             font-weight: 600;
-            padding: 0.5rem 1.2rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            border-radius: 50px;
-            display: inline-block;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-align: left;
         }
 
-        /* Mobile Menu */
-        .mobile-menu-toggle {
-            display: none;
-            background: transparent;
+        .form-select {
+            background-color: rgba(30, 39, 82, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.25);
+        }
+
+        .form-select option {
+            background-color: #1e2752;
+            color: var(--text-light);
+        }
+
+        .btn-beatcanvas {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
             border: none;
             color: var(--text-light);
-            font-size: 1.5rem;
-            cursor: pointer;
+            padding: 0.8rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 206, 206, 0.3);
+            display: inline-block;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+
+        .btn-beatcanvas:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 206, 206, 0.4);
+        }
+
+        /* Confirmation Modal */
+        .modal-content {
+            background-color: rgba(30, 39, 82, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            border: none;
+            color: var(--text-light);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-confirm:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 206, 206, 0.3);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+        }
+
+        /* Canvas Visualization Background */
+        .canvas-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.1;
         }
 
         /* Footer Styles */
@@ -282,6 +337,16 @@
             transform: translateY(-3px);
         }
 
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .nav-menu {
@@ -306,14 +371,8 @@
                 display: block;
             }
 
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .history-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.8rem;
+            .beatcanvas-section h1 {
+                font-size: 2.2rem;
             }
         }
 
@@ -326,22 +385,16 @@
                 padding: 6rem 1rem 1rem;
             }
             
-            .page-header {
-                padding: 1.5rem 1rem;
+            .beatcanvas-section {
+                padding: 2rem 1rem;
             }
             
-            .page-header h1 {
+            .beatcanvas-section h1 {
                 font-size: 1.8rem;
             }
             
-            .header-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .btn-custom {
-                width: 100%;
-                text-align: center;
+            .lead {
+                font-size: 1.1rem;
             }
             
             .footer-content {
@@ -360,7 +413,7 @@
     <header class="top-nav">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
-                <a class="brand-logo" href="#">Moodify</a>
+                <a class="brand-logo" href="{% url 'dashboard' %}">Moodify</a>
                 
                 <button class="mobile-menu-toggle">
                     <i class="fas fa-bars"></i>
@@ -383,12 +436,12 @@
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'emotion_history' %}" class="active">
+                        <a href="{% url 'emotion_history' %}">
                             <i class="fas fa-chart-line"></i> Mood Journey
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="{% url 'beatcanvas' %}">
+                        <a href="{% url 'beatcanvas' %}" class="active">
                             <i class="fas fa-wave-square"></i> BeatCanvas
                         </a>
                     </div>
@@ -415,37 +468,48 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="page-header">
-            <h1>Your Mood Journey</h1>
-            <div class="header-buttons">
-                <button onclick="history.back()" class="btn-custom">
-                    <i class="fas fa-arrow-left me-2"></i>Back
-                </button>
-                <a href="{% url 'emotion' %}" class="btn-custom">
-                    <i class="fas fa-heart me-2"></i>Detect New Emotion
-                </a>
-            </div>
+        {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+        <div class="beatcanvas-section">
+            <h1>BeatCanvas <span class="beats-emoji">🎵</span></h1>
+            <p class="lead">Experience music in a new dimension with dynamic visualizations</p>
+            
+            <div class="music-selection-container">
+                <form method="post" id="playlist-form">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="emotion" class="form-label">Select your mood:</label>
+                        <select class="form-select" id="emotion" name="emotion" required>
+                            <option value="" selected disabled>Choose your emotion...</option>
+                            {% for playlist in playlists %}
+                                <option value="{{ playlist.emotion }}">{{ playlist.emotion|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        <div class="history-container">
-            <ul class="history-list">
-                {% for log in logs %}
-                <li class="history-item">
-                    <span class="timestamp">
-                        <i class="far fa-clock me-2"></i>
-                        {{ log.timestamp }}
-                    </span>
-                    <span class="emotion">
-                        <i class="fas fa-heart me-2"></i>
-                        {{ log.emotion }}
-                    </span>
-                </li>
-                {% empty %}
-                <li class="history-item" style="text-align: center; justify-content: center;">
-                    <span>No emotion history available yet. Start your mood journey by detecting your first emotion!</span>
-                </li>
-                {% endfor %}
-            </ul>
+                    <div class="mb-4">
+                        <label for="language" class="form-label">Select language:</label>
+                        <select class="form-select" id="language" name="language" required>
+                            <option value="" selected disabled>Choose language...</option>
+                            {% for language in languages %}
+                                <option value="{{ language.id }}">{{ language.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-beatcanvas" id="launch-button">
+                        <i class="fas fa-play-circle me-2"></i>Launch BeatCanvas
+                    </button>
+                </form>
+            </div>
         </div>
 
         <footer>
@@ -462,6 +526,28 @@
             </div>
         </footer>
     </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Your Selection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you ready to experience <span id="selected-emotion" class="fw-bold"></span> music in <span id="selected-language" class="fw-bold"></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-confirm" id="confirm-button">Let's Go!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas for visualization (decorative background) -->
+    <canvas id="visualizer" class="canvas-bg"></canvas>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -481,31 +567,66 @@
             }
         });
         
-        // Add scroll animation to history items
-        const historyItems = document.querySelectorAll('.history-item');
-        
-        function checkScroll() {
-            historyItems.forEach(item => {
-                const itemTop = item.getBoundingClientRect().top;
-                const triggerBottom = window.innerHeight * 0.8;
+        // Launch button click handler
+        document.getElementById('launch-button').addEventListener('click', function() {
+            const emotion = document.getElementById('emotion').value;
+            const language = document.getElementById('language');
+            const languageId = language.value;
+            const languageText = language.options[language.selectedIndex].text;
+            
+            if (emotion && languageId) {
+                document.getElementById('selected-emotion').textContent = emotion;
+                document.getElementById('selected-language').textContent = languageText;
                 
-                if (itemTop < triggerBottom) {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                }
-            });
-        }
-        
-        // Initialize history items
-        historyItems.forEach(item => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(20px)';
-            item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                // Show confirmation modal
+                const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                confirmModal.show();
+            } else {
+                alert('Please select both emotion and language to continue.');
+            }
         });
         
-        // Check on load and scroll
-        window.addEventListener('load', checkScroll);
-        window.addEventListener('scroll', checkScroll);
+        // Confirm button click handler
+        document.getElementById('confirm-button').addEventListener('click', function() {
+            document.getElementById('playlist-form').submit();
+        });
+        
+        // Simple canvas visualizer (decorative background)
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const time = Date.now() * 0.001;
+            const hue = (time * 10) % 360;
+            
+            // Draw wave patterns
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.strokeStyle = `hsla(${(hue + i * 20) % 360}, 80%, 60%, 0.2)`;
+                ctx.lineWidth = 2;
+                
+                for (let x = 0; x < canvas.width; x += 5) {
+                    const y = Math.sin(x * 0.01 + time + i) * 50 + canvas.height / 2 + i * 30;
+                    ctx.lineTo(x, y);
+                }
+                
+                ctx.stroke();
+            }
+            
+            requestAnimationFrame(draw);
+        }
+        
+        draw();
     </script>
 </body>
 </html>

@@ -4,107 +4,162 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Moodify</title>
+    <title>Soundscape - Moodify</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3498db;      /* Vibrant Blue */
-            --secondary-color: #2ecc71;    /* Emerald Green */
-            --accent-color: #8e44ad;       /* Deep Purple */
-            --dark-bg: #1a2238;            /* Deep Navy Blue */
-            --darker-bg: #121725;          /* Darker Navy */
+            --primary-color: #6C5CE7;      /* Soft Purple */
+            --secondary-color: #00CECE;    /* Bright Teal */
+            --accent-color: #FD71AF;       /* Hot Pink */
+            --dark-bg: #12152e;            /* Deep Space Blue */
+            --card-bg: rgba(30, 39, 82, 0.7);  /* Translucent Navy */
             --text-light: #ffffff;         /* Pure White */
             --text-muted: #a0aec0;         /* Soft Gray */
-            --input-bg: #2c3e50;           /* Dark Slate */
-            --input-border: rgba(255, 255, 255, 0.1);
-            --transition: all 0.3s ease;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             margin: 0;
             padding: 0;
             min-height: 100vh;
             background: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 50%, rgba(0, 206, 206, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 40% 80%, rgba(253, 113, 175, 0.1) 0%, transparent 30%);
             color: var(--text-light);
             overflow-x: hidden;
         }
 
-        .wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            width: 280px;
-            background-color: var(--darker-bg);
-            padding: 2rem 1.5rem;
-            transition: var(--transition);
+        /* Top Navigation */
+        .top-nav {
+            background-color: rgba(18, 21, 46, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
             position: fixed;
-            height: 100vh;
+            width: 100%;
+            top: 0;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .sidebar-brand {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .sidebar-brand h2 {
-            font-size: 2rem;
+        .brand-logo {
+            font-size: 1.7rem;
             font-weight: 700;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
         }
 
-        .nav-link {
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-item a {
             color: var(--text-muted);
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            transition: var(--transition);
             font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
         }
 
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--primary-color);
-            transform: translateX(5px);
+        .nav-item a:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .nav-link i {
-            margin-right: 1rem;
-            width: 20px;
-            text-align: center;
+        .nav-item a i {
+            margin-right: 0.5rem;
+        }
+        
+        .nav-item a.active {
+            color: var(--text-light);
+            background: rgba(108, 92, 231, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            color: var(--accent-color);
         }
 
         /* Main Content Styles */
         .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 2rem;
-            transition: var(--transition);
+            padding: 10rem 2rem 2rem;
         }
 
         .welcome-section {
             text-align: center;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            background: rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
-            border-radius: 8px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(108, 92, 231, 0.1);
+            z-index: -1;
+        }
+
+        .welcome-section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(0, 206, 206, 0.1);
+            z-index: -1;
         }
 
         .welcome-section h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
             margin-bottom: 1rem;
             background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
@@ -112,224 +167,645 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .welcome-emoji {
+            font-size: 3rem;
+            display: inline-block;
+            animation: wave 2.5s infinite;
+            transform-origin: 70% 70%;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+
         .lead {
             color: var(--text-light);
             opacity: 0.9;
+            font-size: 1.3rem;
+            font-weight: 300;
         }
 
-        .options {
+        .soundscape-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             padding: 1rem;
         }
 
-        .option-card {
+        .soundscape-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border-radius: 8px;
-            padding: 2rem;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
             text-align: center;
             transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .option-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+        .soundscape-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            transform: rotate(0deg);
+            transition: var(--transition);
+            z-index: -1;
         }
 
-        .option-card i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
+        .soundscape-card:hover {
+            transform: translateY(0);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        .option-card h3 {
-            font-size: 1.5rem;
+        .soundscape-card:hover::before {
+            transform: rotate(180deg);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .soundscape-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .soundscape-card:nth-child(2n) .soundscape-icon {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .soundscape-card:nth-child(3n) .soundscape-icon {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .soundscape-card h3 {
+            font-size: 1.7rem;
             margin-bottom: 1rem;
             font-weight: 600;
             color: var(--text-light);
         }
 
-        .option-card p {
+        .soundscape-card p {
             color: var(--text-muted);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
         }
 
-        .btn-custom {
-            background: var(--primary-color);
+        .btn-soundscape {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             border: none;
             color: var(--text-light);
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 1.8rem;
             border-radius: 50px;
-            font-weight: 500;
+            font-weight: 600;
             transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            display: inline-block;
+            text-decoration: none;
         }
 
-        .btn-custom:hover {
-            background: var(--secondary-color);
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
+        .soundscape-card:nth-child(2n) .btn-soundscape {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            box-shadow: 0 5px 15px rgba(0, 206, 206, 0.3);
+        }
+
+        .soundscape-card:nth-child(3n) .btn-soundscape {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            box-shadow: 0 5px 15px rgba(253, 113, 175, 0.3);
+        }
+
+        .soundscape-card:nth-child(4n) .btn-soundscape {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-soundscape:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+            color: white;
         }
 
         /* Footer Styles */
         footer {
-            background-color: var(--darker-bg);
+            background-color: rgba(18, 21, 46, 0.8);
+            backdrop-filter: blur(10px);
             color: var(--text-muted);
             text-align: center;
-            padding: 1rem;
-            margin-top: auto;
-            bottom: 0;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            border-radius: 16px;
         }
 
-        .toggle-sidebar {
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
             display: none;
-            background: var(--primary-color);
-            color: var(--text-light);
+            background: transparent;
             border: none;
-            padding: 0.5rem;
-            border-radius: 4px;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
+            .nav-menu {
                 position: fixed;
+                top: 70px;
+                right: -100%;
+                width: 250px;
+                background: rgba(18, 21, 46, 0.95);
+                backdrop-filter: blur(10px);
+                height: calc(100vh - 70px);
+                flex-direction: column;
+                padding: 2rem;
+                transition: var(--transition);
+                align-items: flex-start;
             }
 
-            .sidebar.active {
-                transform: translateX(0);
+            .nav-menu.active {
+                right: 0;
             }
 
-            .main-content {
-                margin-left: 0;
-            }
-
-            .toggle-sidebar {
+            .mobile-menu-toggle {
                 display: block;
+            }
+
+            .welcome-section h1 {
+                font-size: 2.2rem;
             }
         }
 
         @media (max-width: 576px) {
+            .top-nav {
+                padding: 0.8rem 1rem;
+            }
+            
+            .main-content {
+                padding: 6rem 1rem 1rem;
+            }
+            
+            .welcome-section {
+                padding: 2rem 1rem;
+            }
+            
             .welcome-section h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
+            
+            .lead {
+                font-size: 1.1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+        .floating-help-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px; /* Changed from left to right for better UX */
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-light);
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            z-index: 1050;
+            transition: var(--transition);
+            border: none;
+        }
 
-            .options {
-                grid-template-columns: 1fr;
-            }
+        .floating-help-icon:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        /* Modal Styling */
+        .bg-dark-modal {
+            background-color: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: var(--text-light);
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .custom-select, .custom-textarea {
+            background-color: rgba(18, 21, 46, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border-radius: 10px;
+            padding: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .custom-select:focus, .custom-textarea:focus {
+            background-color: rgba(30, 39, 82, 0.8);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
+            color: var(--text-light);
+        }
+
+        .custom-select option {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+        }
+
+        .form-label {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-soundscape-feedback {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            border: none;
+            color: var(--text-light);
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 206, 206, 0.3);
+            text-decoration: none;
+        }
+
+        .btn-soundscape-feedback:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 206, 206, 0.4);
+        }
+
+        /* Fix the modal close button */
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Modal Animation */
+        .modal.fade .modal-dialog {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <button class="toggle-sidebar d-lg-none">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-brand">
-                <h2>Moodify</h2>
-            </div>
-            <nav>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'playsongs' %}">
-                            <i class="fas fa-music"></i>
-                            Play Random Songs
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="brand-logo" href="#">Moodify</a>
+                
+                <button class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="nav-menu">
+                    <div class="nav-item">
+                        <a href="{% url 'home' %}" class="home-btn" class="active">
+                            <i class="fas fa-home"></i> Home
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'redirect_to_emotion' %}">
-                            <i class="fas fa-smile"></i>
-                            Play Based on Feelings
+                    </div>                   
+                    <div class="nav-item">
+                        <a href="{% url 'playsongs' %}">
+                            <i class="fas fa-random"></i> Discovery
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'emotion_history' %}">
-                            <i class="fas fa-history"></i>
-                            Emotion History
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'redirect_to_emotion' %}">
+                            <i class="fas fa-heart"></i> SoulSync
                         </a>
-                    </li>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'emotion_history' %}">
+                            <i class="fas fa-chart-line"></i> Mood Journey
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'beatcanvas' %}">
+                            <i class="fas fa-wave-square"></i> BeatCanvas
+                        </a>
+                    </div>
                     {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">
-                            <i class="fas fa-tachometer-alt"></i>
-                            Admin Dashboard
+                    <div class="nav-item">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Admin
                         </a>
-                    </li>
+                    </div>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                </nav>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar">
+                        {{ user.first_name|slice:":1" }}
+                    </div>
+                    </a>
+                    <!-- Logout Button -->
+                    <a href="{% url 'logout' %}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-section">
+            <h1>Hi, {{ user.first_name }}! <span class="welcome-emoji">👋</span></h1>
+            <p class="lead">Ready to transform your mood with sound?</p>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="welcome-section">
-                <h1>Welcome, {{ user.first_name }}! 👋</h1>
-                <p class="lead">What would you like to do today?</p>
+        <div class="soundscape-options">
+            <div class="soundscape-card">
+                <div class="card-content">
+                    <i class="fas fa-random soundscape-icon"></i>
+                    <h3>SoundSurfer</h3>
+                    <p>Drift through unexpected melodies and discover new musical horizons that expand your audio palette</p>
+                </div>
+                <a href="{% url 'playsongs' %}" class="btn-soundscape">Start Surfing</a>
             </div>
 
-            <div class="options">
-                <div class="option-card">
-                    <i class="fas fa-music"></i>
-                    <h3>Random Songs</h3>
-                    <p>Discover new music with our random songs</p>
-                    <a href="{% url 'playsongs' %}" class="btn btn-custom">Start Listening</a>
+            <div class="soundscape-card">
+                <div class="card-content">
+                    <i class="fas fa-heart soundscape-icon"></i>
+                    <h3>SoulSync</h3>
+                    <p>Let your emotions guide your musical journey through carefully curated tracks that match your current mood</p>
                 </div>
-
-                <div class="option-card">
-                    <i class="fas fa-smile"></i>
-                    <h3>Mood Based</h3>
-                    <p>Let your feelings guide your musical journey</p>
-                    <a href="{% url 'redirect_to_emotion' %}" class="btn btn-custom">Select Mood</a>
-                </div>
-
-                <div class="option-card">
-                    <i class="fas fa-history"></i>
-                    <h3>Your History</h3>
-                    <p>Review your emotional journey through music</p>
-                    <a href="{% url 'emotion_history' %}" class="btn btn-custom">View History</a>
-                </div>
+                <a href="{% url 'redirect_to_emotion' %}" class="btn-soundscape">Match My Mood</a>
             </div>
 
-            <footer>
-                <p>&copy; 2025 Moodify. All rights reserved.</p>
-            </footer>
+            <div class="soundscape-card">
+                <div class="card-content">
+                    <i class="fas fa-chart-line soundscape-icon"></i>
+                    <h3>Mood Journey</h3>
+                    <p>Explore your emotional landscape through time with visualized data of your music-emotion connections</p>
+                </div>
+                <a href="{% url 'emotion_history' %}" class="btn-soundscape">View Journey</a>
+            </div>
+
+            <div class="soundscape-card">
+                <div class="card-content">
+                    <i class="fas fa-heartbeat soundscape-icon"></i>
+                    <h3>EmotionWave</h3>
+                    <p>Play music based on your emotions and let the rhythms match your mood, creating a personalized audio experience.</p>
+                </div>
+                <a href="{% url 'beatcanvas' %}" class="btn-soundscape">Play Music by Emotions</a>
+            </div>            
         </div>
+
+        <!-- Floating Help Icon -->
+        <div class="floating-help-icon" id="helpIcon" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+            <i class="fas fa-comment-alt"></i>
+        </div>
+        
+
+
+        <!-- Modal for submitting feedback -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark-modal">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title gradient-text" id="feedbackModalLabel">Share Your Thoughts</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{% url 'submit_feedback' %}" id="feedbackForm">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Feedback Type</label>
+                                <select class="form-select custom-select" id="title" name="title">
+                                    <option value="suggestion">Suggestion</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="question">Question</option>
+                                    <option value="praise">Praise</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="suggestion" class="form-label">Your Message</label>
+                                <textarea class="form-control custom-textarea" id="suggestion" name="suggestion" rows="4" placeholder="Tell us what's on your mind..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-soundscape-feedback w-100">Submit Feedback</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer>
+            <div class="footer-content">
+                <div>
+                    <p>&copy; 2025 Moodify. All rights reserved.</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-spotify"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Toggle sidebar on mobile
-        document.querySelector('.toggle-sidebar').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        mobileMenuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
         });
 
-        // Close sidebar when clicking outside on mobile
+        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const toggleBtn = document.querySelector('.toggle-sidebar');
-            
-            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
-                sidebar.classList.remove('active');
+            if (!navMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+                navMenu.classList.remove('active');
             }
         });
+        
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.btn-soundscape');
+        
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+            });
+        });
+        
+        // Add scroll animation to cards
+        const cards = document.querySelectorAll('.soundscape-card');
+        
+        function checkScroll() {
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                const triggerBottom = window.innerHeight * 0.8;
+                
+                if (cardTop < triggerBottom) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        }
+        
+        // Initialize cards
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        
+        // Check on load and scroll
+        window.addEventListener('load', checkScroll);
+        window.addEventListener('scroll', checkScroll);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Form submission handler
+        const feedbackForm = document.getElementById('feedbackForm');
+        
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get CSRF token
+                const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+                
+                // Create form data
+                const formData = new FormData(feedbackForm);
+                
+                              
+                // AJAX request
+                fetch(feedbackForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        alert(data.message);
+                        // Close the modal
+                        bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+                        // Reset the form
+                        feedbackForm.reset();
+                    } else {
+                        // Handle validation errors
+                        console.error('Form submission errors:', data.errors);
+                        
+                        // Display errors to the user
+                        let errorMessage = 'Please correct the following errors:\n';
+                        for (const field in data.errors) {
+                            errorMessage += `- ${field}: ${data.errors[field].join(', ')}\n`;
+                        }
+                        alert(errorMessage);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting feedback:', error);
+                    alert('An unexpected error occurred. Please try again later.');
+                });
+            });
+        }
+        
+        // Fix for the dimming issue
+        const feedbackModal = document.getElementById('feedbackModal');
+        if (feedbackModal) {
+            feedbackModal.addEventListener('hidden.bs.modal', function() {
+                // Remove modal backdrop if it exists
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+                
+                // Remove modal-open class from body
+                document.body.classList.remove('modal-open');
+                
+                // Remove inline styles added by Bootstrap
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            });
+        }
+    });
     </script>
 </body>
 </html>

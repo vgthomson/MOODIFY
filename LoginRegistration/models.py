@@ -38,3 +38,21 @@ class Playlist(models.Model):
         return f"{self.emotion} ({self.language}): {self.playlist_url}"
     
 
+class Feedback(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Resolved', 'Resolved'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
+    title = models.CharField(max_length=200)
+    suggestion = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    admin_note = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Feedback from {self.user.username} - {self.title}"
+    
+

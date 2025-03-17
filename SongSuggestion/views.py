@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from transformers import pipeline
 from django.contrib import messages
 import enchant
+import json
 from django.http import HttpResponseRedirect
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -10,6 +11,7 @@ from .forms import UserEmotion, LanguageSelectionForm
 from .models import EmotionLog
 from LoginRegistration.models import Playlist, Language
 from django.urls import reverse
+from django.http import JsonResponse
 
 # Initialize the emotion detection model
 emotion_model = pipeline("text-classification", model="joeddav/distilbert-base-uncased-go-emotions-student")
@@ -107,3 +109,51 @@ def LogoutView(request):
     response['Expires'] = '0'
 
     return response
+
+def beatcanvas(request):
+    languages = Language.objects.all()
+    playlists = Playlist.objects.values('emotion').distinct()
+    
+    if request.method == 'POST':
+        emotion = request.POST.get('emotion')
+        language_id = request.POST.get('language')
+        
+        try:
+            # Find the playlist that matches the emotion and language
+            playlist = Playlist.objects.get(emotion=emotion, language_id=language_id)
+            
+            # Log the emotion selection
+            if request.user.is_authenticated:
+                EmotionLog.objects.create(
+                    user=request.user,
+                    emotion=emotion
+                )
+                
+            # Redirect to the playlist URL
+            return redirect(playlist.playlist_url)
+        except Playlist.DoesNotExist:
+            messages.error(request, "Sorry, no playlist found for this combination.")
+            
+    return render(request, 'SongSuggestion/playforemotion.html', {
+        'languages': languages,
+        'playlists': playlists,
+    })
+
+def add_language(request):
+    if request.method == 'POST':
+        try:
+            # Parse the incoming JSON request body
+            data = json.loads(request.body.decode('utf-8'))
+            language_name = data.get('name')  # Get the language name from the parsed data
+            
+            if language_name:
+                language, created = Language.objects.get_or_create(name=language_name)
+                if created:
+                    return JsonResponse({'success': True, 'message': 'Language added successfully!'})
+                else:
+                    return JsonResponse({'success': False, 'message': 'Language already exists.'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Language name is required.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON format.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})

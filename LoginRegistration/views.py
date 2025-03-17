@@ -10,7 +10,8 @@ from django.urls import reverse
 from .models import *
 from SongSuggestion.models import EmotionLog
 import json
-from django.db.models.signals import post_save
+from .forms import *
+from django.http import HttpResponse
 from django.dispatch import receiver
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
@@ -208,8 +209,8 @@ def manage_playlists(request):
 
 @user_passes_test(is_superadmin)
 def dashboard(request):
-    # Get total users count (excluding deleted users)
-    total_users = UserProfile.objects.filter(is_deleted=False).count()
+    # Get total users count (excluding deleted users).filter(is_deleted=False)
+    total_users = User.objects.count()
     
     # Count active playlists
     active_playlists = Playlist.objects.count()
@@ -220,10 +221,30 @@ def dashboard(request):
     # Count languages available
     available_languages = Language.objects.count()
     
-    # Get most common emotions (top 5)
+    # Get most common emotions (top 5) with percentage calculation
+    emotion_count = EmotionLog.objects.count()
     top_emotions = EmotionLog.objects.values('emotion').annotate(
         count=Count('emotion')
     ).order_by('-count')[:5]
+    
+    # Calculate percentage for each emotion
+    if emotion_count > 0:
+        for emotion in top_emotions:
+            emotion['percentage'] = (emotion['count'] / emotion_count) * 100
+    
+    # Get language distribution for the chart based on playlists
+    # Since EmotionLog doesn't have a direct language field, we need to get this data from the Playlist model
+    language_distribution = Playlist.objects.values('language__name').annotate(
+        count=Count('language')
+    ).order_by('-count')
+    
+    # Alternatively, if you want language distribution based on emotions that have linked playlists
+    # This gets languages from playlists that match emotions users have logged
+    # language_distribution = Playlist.objects.filter(
+    #     emotion__in=EmotionLog.objects.values_list('emotion', flat=True)
+    # ).values('language__name').annotate(
+    #     count=Count('language')
+    # ).order_by('-count')
     
     # Recent emotion logs
     recent_logs = EmotionLog.objects.select_related('user').order_by('-timestamp')[:10]
@@ -235,6 +256,7 @@ def dashboard(request):
         'available_languages': available_languages,
         'top_emotions': top_emotions,
         'recent_logs': recent_logs,
+        'language_distribution': language_distribution,
     }
     
     return render(request, 'Admin/admin_dashboard.html', context)
@@ -371,3 +393,107 @@ def delete_user(request, id):
         return JsonResponse({"message": "User deleted successfully"})
 
     return JsonResponse({"message": "Invalid request"}, status=400)
+
+
+def submit_feedback(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user
+            feedback.save()
+            return JsonResponse({'success': True, 'message': 'Feedback submitted successfully!'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)  # Return errors if form is invalid
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST
+import json
+from .models import Feedback
+from datetime import datetime
+
+def is_admin(user):
+    """Check if user is an admin"""
+    return user.is_staff or user.is_superuser
+
+@login_required
+@user_passes_test(is_admin)
+def manage_feedback(request):
+    """
+    View for administrators to manage user feedback
+    Displays all feedback entries in a table with filtering options
+    """
+    # Get all feedback entries ordered by created date (newest first)
+    feedbacks = Feedback.objects.all().order_by('-created_at')
+    
+    context = {
+        'feedbacks': feedbacks,
+        'active_page': 'manage_feedback'  # For highlighting the active sidebar menu item
+    }
+    
+    return render(request, 'Admin/manage_feedback.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def update_feedback(request, feedback_id):
+    """
+    View to handle AJAX requests to update feedback status
+    """
+    feedback = get_object_or_404(Feedback, id=feedback_id)
+    
+    try:
+        # Parse the request body as JSON
+        data = json.loads(request.body)
+        status = data.get('status')
+        admin_note = data.get('admin_note', '')
+        
+        # Validate status
+        valid_statuses = ['Pending', 'In Progress', 'Resolved']
+        if status not in valid_statuses:
+            return JsonResponse({
+                'message': 'Invalid status value'
+            }, status=400)
+        
+        # Update the feedback
+        feedback.status = status
+        feedback.admin_note = admin_note
+        feedback.updated_at = datetime.now()
+        feedback.save()
+        
+        return JsonResponse({
+            'message': 'Feedback status updated successfully',
+            'status': status
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'message': f'Error updating feedback: {str(e)}'
+        }, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def delete_feedback(request, feedback_id):
+    """
+    View to handle AJAX requests to delete feedback
+    """
+    try:
+        feedback = get_object_or_404(Feedback, id=feedback_id)
+        feedback.delete()
+        
+        return JsonResponse({
+            'message': 'Feedback deleted successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'message': f'Error deleting feedback: {str(e)}'
+        }, status=500)
