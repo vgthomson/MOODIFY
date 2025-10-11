@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion History - Moodify</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6C5CE7;      /* Soft Purple */
+            --secondary-color: #00CECE;    /* Bright Teal */
+            --accent-color: #FD71AF;       /* Hot Pink */
+            --dark-bg: #12152e;            /* Deep Space Blue */
+            --card-bg: rgba(30, 39, 82, 0.7);  /* Translucent Navy */
+            --text-light: #ffffff;         /* Pure White */
+            --text-muted: #a0aec0;         /* Soft Gray */
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 50%, rgba(0, 206, 206, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 40% 80%, rgba(253, 113, 175, 0.1) 0%, transparent 30%);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background-color: rgba(18, 21, 46, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .brand-logo {
+            font-size: 1.7rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-item a {
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+        .nav-item a.active {
+            color: var(--text-light);
+            background: rgba(108, 92, 231, 0.2);
+        }
+
+        .nav-item a:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item a i {
+            margin-right: 0.5rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            color: var(--accent-color);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 7rem 2rem 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(108, 92, 231, 0.1);
+            z-index: -1;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(0, 206, 206, 0.1);
+            z-index: -1;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-custom {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: var(--text-light);
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            text-decoration: none;
+        }
+
+        .btn-custom:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+            color: white;
+        }
+
+        .history-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow);
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .history-item .timestamp {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .history-item .emotion {
+            color: var(--text-light);
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: rgba(18, 21, 46, 0.8);
+            backdrop-filter: blur(10px);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            border-radius: 16px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                width: 250px;
+                background: rgba(18, 21, 46, 0.95);
+                backdrop-filter: blur(10px);
+                height: calc(100vh - 70px);
+                flex-direction: column;
+                padding: 2rem;
+                transition: var(--transition);
+                align-items: flex-start;
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .top-nav {
+                padding: 0.8rem 1rem;
+            }
+            
+            .main-content {
+                padding: 6rem 1rem 1rem;
+            }
+            
+            .page-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-custom {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="brand-logo" href="#">Moodify</a>
+                
+                <button class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="nav-menu">
+                    <div class="nav-item">
+                        <a href="{% url 'home' %}" class="home-btn">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'playsongs' %}">
+                            <i class="fas fa-random"></i> Discovery
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'redirect_to_emotion' %}">
+                            <i class="fas fa-heart"></i> SoulSync
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'emotion_history' %}" class="active">
+                            <i class="fas fa-chart-line"></i> Mood Journey
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'beatcanvas' %}">
+                            <i class="fas fa-heartbeat"></i> EmotionWave
+                        </a>
+                    </div>
+                    {% if user.is_superuser %}
+                    <div class="nav-item">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Admin
+                        </a>
+                    </div>
+                    {% endif %}
+                </nav>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar">
+                        {{ user.first_name|slice:":1" }}
+                    </div>
+                    <a href="{% url 'logout' %}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Your Mood Journey</h1>
+            <div class="header-buttons">
+                <button onclick="history.back()" class="btn-custom">
+                    <i class="fas fa-arrow-left me-2"></i>Back
+                </button>
+                <a href="{% url 'emotion' %}" class="btn-custom">
+                    <i class="fas fa-heart me-2"></i>Detect New Emotion
+                </a>
+            </div>
+        </div>
+
+        <div class="history-container">
+            <ul class="history-list">
+                {% for log in logs %}
+                <li class="history-item">
+                    <span class="timestamp">
+                        <i class="far fa-clock me-2"></i>
+                        {{ log.timestamp }}
+                    </span>
+                    <span class="emotion">
+                        <i class="fas fa-heart me-2"></i>
+                        {{ log.emotion }}
+                    </span>
+                </li>
+                {% empty %}
+                <li class="history-item" style="text-align: center; justify-content: center;">
+                    <span>No emotion history available yet. Start your mood journey by detecting your first emotion!</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div>
+                    <p>&copy; 2025 Moodify. All rights reserved.</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-spotify"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        mobileMenuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!navMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+        
+        // Add scroll animation to history items
+        const historyItems = document.querySelectorAll('.history-item');
+        
+        function checkScroll() {
+            historyItems.forEach(item => {
+                const itemTop = item.getBoundingClientRect().top;
+                const triggerBottom = window.innerHeight * 0.8;
+                
+                if (itemTop < triggerBottom) {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }
+            });
+        }
+        
+        // Initialize history items
+        historyItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        
+        // Check on load and scroll
+        window.addEventListener('load', checkScroll);
+        window.addEventListener('scroll', checkScroll);
+    </script>
+</body>
+</html>

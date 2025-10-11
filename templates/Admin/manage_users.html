@@ -1,0 +1,714 @@
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+    />
+    <style>
+        :root {
+            --primary-color: #4361ee;      /* Royal Blue */
+            --secondary-color: #3bc9db;    /* Bright Cyan */
+            --accent-color: #f72585;       /* Vibrant Pink */
+            --dark-bg: #151933;            /* Deep Navy Blue */
+            --darker-bg: #0f1328;          /* Darker Navy */
+            --card-bg: rgba(28, 36, 75, 0.7);  /* Translucent Navy */
+            --text-light: #ffffff;         /* Pure White */
+            --text-muted: #a0b0d7;         /* Soft Blue-Gray */
+            --transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            --menu-item-height: 50px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 50%, rgba(59, 201, 219, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 40% 80%, rgba(247, 37, 133, 0.1) 0%, transparent 30%);
+            color: var(--text-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--darker-bg);
+            padding: 0;
+            transition: var(--transition);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-brand h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+            flex-grow: 1;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+            padding: 0 1.5rem;
+            height: var(--menu-item-height);
+            transition: var(--transition);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+        }
+        /* Add these styles to the existing CSS */
+            #usersTable .url-column {
+                max-width: 250px; /* Set a fixed width for URL column */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            /* Make sure action column has enough space */
+            #usersTable .action-column {
+                min-width: 110px;
+                white-space: nowrap;
+            }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-light);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(90deg, var(--primary-color) 0%, rgba(67, 97, 238, 0.1) 100%);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-link:hover::after {
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 5px;
+            background: var(--secondary-color);
+            left: 0;
+            top: 0;
+        }
+
+        .nav-link.active::after {
+            display: none;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 1.5rem;
+        }
+
+        #usersTable {
+            width: 100%;
+            color: var(--text-light);
+        }
+
+        #usersTable thead th {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        #usersTable tbody td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        #usersTable tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* DataTables Custom Styling */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_processing,
+        .dataTables_wrapper .dataTables_paginate {
+            color: var(--text-muted);
+            margin: 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-muted) !important;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            margin: 0 0.2rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--primary-color) !important;
+            color: var(--text-light) !important;
+            border: none !important;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .btn-warning {
+            background: var(--accent-color);
+            color: var(--text-light);
+        }
+
+        .btn-danger {
+            background: #E61E32;
+            color: var(--text-light);
+        }
+
+        .btn-danger:hover {
+            background: #ff1e1e;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: var(--dark-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+        }
+
+        .modal-header .btn-close {
+            background: var(--text-light);
+            opacity: 0.5;
+            padding: 0.5rem;
+        }
+
+        .modal-title {
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-label {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            padding: 0.8rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.25);
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        /* Style the dropdown options */
+        .form-select option {
+            background: var(--dark-bg);
+            color: var(--text-light);
+            padding: 0.8rem;
+        }
+
+        /* Optional: Style the option hover effect */
+        .form-select option:hover {
+            background: var(--primary-color);
+            color: var(--text-dark); /* Or use a lighter text color */
+        }
+
+
+        /* Toggle Sidebar Button */
+        .toggle-sidebar {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--primary-color);
+            border: none;
+            color: var(--text-light);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .toggle-sidebar {
+                display: block;
+            }
+            .content-header {
+                margin-top: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .content-header {
+                padding: 1rem;
+            }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .sidebar-brand h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Footer styling */
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
+  </head>
+  <body>
+    <button class="toggle-sidebar">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay"></div>
+
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-brand">
+            <h2>Admin Dashboard</h2>
+        </div>
+        <div class="sidebar-menu">
+            <a href="{% url 'dashboard' %}" class="nav-link">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="{% url 'manage_users' %}" class="nav-link active">
+                <i class="fas fa-users"></i>
+                Manage Users
+            </a>
+            <a href="{% url 'manage_playlists' %}" class="nav-link">
+                <i class="fas fa-list-ul"></i>
+                Manage Playlists
+            </a>
+            <a href="{% url 'manage_feedback' %}" class="nav-link">
+                <i class="fas fa-comment-alt"></i>
+                Manage Feedback
+            </a>
+            <a href="{% url 'home' %}" class="nav-link">
+                <i class="fas fa-home"></i>
+                User Page
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+        <div class="sidebar-footer">
+            <p>© 2025 Admin System</p>
+        </div>
+    </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-header">
+          <h2>Manage Users</h2>
+          <!-- <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addUserModal"
+          >
+            <i class="fas fa-plus me-2"></i>Add New User
+          </button> -->
+        </div>
+
+        <div class="table-responsive">
+          
+          <table class="table" id="usersTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td class="action-buttons">
+                  <button
+                    class="btn btn-warning btn-sm edit-user"
+                    data-id="{{ user.id }}"
+                    data-username="{{ user.username }}"
+                    data-firstname="{{ user.first_name }}"
+                    data-lastname="{{ user.last_name }}"
+                    data-email="{{ user.email }}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editUserModal"
+                  >
+                    <i class="fas fa-edit me-1"></i>Edit
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm delete-user"
+                    data-id="{{ user.id }}"
+                  >
+                    <i class="fas fa-trash me-1"></i>Delete
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+<!-- Add User Modal -->
+<!-- <div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="addUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="addFirstName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="addLastName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="addEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="editFirstName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="editLastName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(document).ready(function() {
+          // Initialize DataTable
+          $('#usersTable').DataTable();
+
+          // Toggle Sidebar
+          const toggleBtn = document.querySelector('.toggle-sidebar');
+          const sidebar = document.querySelector('.sidebar');
+          const overlay = document.querySelector('.sidebar-overlay');
+
+          function toggleSidebar() {
+              sidebar.classList.toggle('active');
+              overlay.classList.toggle('active');
+          }
+
+          toggleBtn.addEventListener('click', toggleSidebar);
+          overlay.addEventListener('click', toggleSidebar);
+
+          function getCSRFToken() {
+                return $('input[name="csrfmiddlewaretoken"]').val();
+            }
+
+            // Open Edit Modal
+            $(".edit-user").click(function() {
+                var button = $(this);
+                $("#editUserId").val(button.data("id"));
+                $("#editFirstName").val(button.data("firstname"));
+                $("#editLastName").val(button.data("lastname"));
+                $("#editEmail").val(button.data("email"));
+            });
+
+            // Update User AJAX
+            $("#editUserForm").submit(function(event) {
+                event.preventDefault();
+                var id = $("#editUserId").val();
+                var data = {
+                    first_name: $("#editFirstName").val(),
+                    last_name: $("#editLastName").val(),
+                    email: $("#editEmail").val()
+                };
+
+                $.ajax({
+                    url: `/update_user/${id}/`,
+                    type: "POST",
+                    data: data,
+                    headers: { "X-CSRFToken": getCSRFToken() },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert("Error: " + xhr.responseJSON.message);
+                    }
+                });
+            });
+
+            // Add User AJAX
+            // $("#addUserForm").submit(function(event) {
+            //     event.preventDefault();
+            //     var data = {
+            //         username: $("#addUsername").val(),
+            //         first_name: $("#addFirstName").val(),
+            //         last_name: $("#addLastName").val(),
+            //         email: $("#addEmail").val()
+            //     };
+
+            //     $.ajax({
+            //         url: "/add_user/",
+            //         type: "POST",
+            //         data: data,
+            //         headers: { "X-CSRFToken": getCSRFToken() },
+            //         success: function(response) {
+            //             alert(response.message);
+            //             location.reload();
+            //         },
+            //         error: function(xhr) {
+            //             alert("Error: " + xhr.responseJSON.message);
+            //         }
+            //     });
+            // });
+
+            // Delete User AJAX
+            $(".delete-user").click(function() {
+                var id = $(this).data("id");
+                if (confirm("Are you sure?")) {
+                    $.ajax({
+                        url: `/delete_user/${id}/`,
+                        type: "POST",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                        success: function(response) {
+                            alert(response.message);
+                            location.reload();
+                        },
+                        error: function(xhr) {
+                            alert("Error: " + xhr.responseJSON.message);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+  </body>
+</html>
